@@ -4,3 +4,8 @@ dist/
 *.log
 coverage/
 .nyc_output/
+
+redis-win/
+redis/
+backend/dump.rdb
+backend/fix-seats.js
