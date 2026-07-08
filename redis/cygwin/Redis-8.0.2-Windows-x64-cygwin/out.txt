@@ -1,0 +1,10 @@
+947:C 22 Jun 2026 23:29:43.861 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+947:C 22 Jun 2026 23:29:43.864 * Redis version=8.0.2, bits=64, commit=2bb94521, modified=0, pid=947, just started
+947:C 22 Jun 2026 23:29:43.865 # Warning: no config file specified, using the default config. In order to specify a config file use /Redis-8.0.2-Windows-x64-cygwin/redis-server /path/to/redis.conf
+947:M 22 Jun 2026 23:29:43.868 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+947:M 22 Jun 2026 23:29:43.869 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+947:M 22 Jun 2026 23:29:43.870 # Current maximum open files is 3200. maxclients has been reduced to 3168 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+947:M 22 Jun 2026 23:29:43.870 * monotonic clock: POSIX clock_gettime
+947:M 22 Jun 2026 23:29:43.871 * Running mode=standalone, port=6379.
+947:M 22 Jun 2026 23:29:43.873 * Server initialized
+947:M 22 Jun 2026 23:29:43.874 * Ready to accept connections tcp

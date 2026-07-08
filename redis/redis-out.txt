@@ -1,0 +1,10 @@
+1520:C 22 Jun 2026 23:28:33.715 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1520:C 22 Jun 2026 23:28:33.717 * Redis version=8.0.2, bits=64, commit=00000000, modified=0, pid=1520, just started
+1520:C 22 Jun 2026 23:28:33.718 # Warning: no config file specified, using the default config. In order to specify a config file use /redis/Redis-8.0.2-Windows-x64-msys2/redis-server /path/to/redis.conf
+1520:M 22 Jun 2026 23:28:33.720 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+1520:M 22 Jun 2026 23:28:33.721 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+1520:M 22 Jun 2026 23:28:33.722 # Current maximum open files is 3200. maxclients has been reduced to 3168 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+1520:M 22 Jun 2026 23:28:33.722 * monotonic clock: POSIX clock_gettime
+1520:M 22 Jun 2026 23:28:33.723 * Running mode=standalone, port=6379.
+1520:M 22 Jun 2026 23:28:33.728 * Server initialized
+1520:M 22 Jun 2026 23:28:33.728 * Ready to accept connections tcp
