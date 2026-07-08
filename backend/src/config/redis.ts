@@ -3,17 +3,19 @@ import { logger } from '../utils/logger';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
-export const redis = new Redis(REDIS_URL, {
+// Upstash and other cloud Redis providers use rediss:// (TLS)
+const isTLS = REDIS_URL.startsWith('rediss://');
+
+const baseOpts: any = {
   maxRetriesPerRequest: null, // Required for BullMQ
   enableReadyCheck: false,
   lazyConnect: true,
-});
+  ...(isTLS ? { tls: { rejectUnauthorized: false } } : {}),
+};
 
-export const pubClient = new Redis(REDIS_URL, {
-  maxRetriesPerRequest: null,
-  enableReadyCheck: false,
-  lazyConnect: true,
-});
+export const redis = new Redis(REDIS_URL, { ...baseOpts });
+
+export const pubClient = new Redis(REDIS_URL, { ...baseOpts });
 
 export const subClient = pubClient.duplicate();
 

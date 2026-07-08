@@ -35,18 +35,22 @@ app.use(passport.initialize());
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, etc.)
+    // Allow requests with no origin (mobile apps, curl, server-to-server)
     if (!origin) return callback(null, true);
     const allowed = [
-      process.env.CLIENT_URL || 'http://localhost:5173',
+      process.env.CLIENT_URL,
       'http://localhost:5173',
       'http://localhost:5174',
       'http://localhost:5175',
       'http://127.0.0.1:5173',
-      'http://127.0.0.1:5174',
-    ];
+    ].filter(Boolean) as string[];
     if (allowed.includes(origin)) return callback(null, true);
-    callback(null, true); // In dev mode allow all — remove this line in production
+    // In production, reject unknown origins
+    if (process.env.NODE_ENV === 'production') {
+      return callback(new Error(`CORS: origin ${origin} not allowed`));
+    }
+    // In dev, allow all
+    callback(null, true);
   },
   credentials: true,
 }));

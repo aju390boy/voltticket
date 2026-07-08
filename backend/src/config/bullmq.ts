@@ -2,14 +2,18 @@ import { Queue, FlowProducer } from 'bullmq';
 
 // BullMQ bundles its own ioredis — use connection options object to avoid type conflicts
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
-const url = new URL(REDIS_URL);
+const isTLS = REDIS_URL.startsWith('rediss://');
+// For parsing: convert rediss:// to redis:// so URL parser doesn't choke
+const url = new URL(REDIS_URL.replace('rediss://', 'redis://'));
 
-const connection = {
+const connection: any = {
   host: url.hostname,
   port: parseInt(url.port || '6379', 10),
   password: url.password || undefined,
+  username: url.username || 'default',
   maxRetriesPerRequest: null as null,
   enableReadyCheck: false,
+  ...(isTLS ? { tls: { rejectUnauthorized: false } } : {}),
 };
 
 export const checkoutQueue = new Queue('checkout', {
