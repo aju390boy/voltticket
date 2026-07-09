@@ -28,7 +28,6 @@ const EMPTY_FORM = {
 };
 
 export function AdminDashboard() {
-  const _qc = useQueryClient();
   const [selectedEventId, setSelectedEventId] = useState('');
   const [revenueHistory, setRevenueHistory] = useState<{ time: string; revenue: number; orders: number }[]>([]);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'events'>('dashboard');
