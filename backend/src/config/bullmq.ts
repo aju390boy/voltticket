@@ -9,8 +9,8 @@ const url = new URL(REDIS_URL.replace('rediss://', 'redis://'));
 const connection: any = {
   host: url.hostname,
   port: parseInt(url.port || '6379', 10),
-  password: url.password || undefined,
-  username: url.username || 'default',
+  ...(url.password ? { password: decodeURIComponent(url.password) } : {}),
+  ...(url.username ? { username: decodeURIComponent(url.username) } : {}),
   maxRetriesPerRequest: null as null,
   enableReadyCheck: false,
   ...(isTLS ? { tls: { rejectUnauthorized: false } } : {}),
