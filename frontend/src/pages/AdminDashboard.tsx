@@ -160,19 +160,19 @@ export function AdminDashboard() {
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(250,248,240,0.75)', backdropFilter: 'blur(2px)' }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
-            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}
+            className="admin-header-row"
           >
             <div>
               <div className="section-eyebrow">Operations Center</div>
               <h1 style={{ fontSize: 32, marginBottom: 4 }}>⚡ Admin Dashboard</h1>
               <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>Real-time flash sale management</p>
             </div>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div className="admin-tab-bar">
               <button style={tabStyle('dashboard')} onClick={() => setActiveTab('dashboard')}>📊 Dashboard</button>
               <button style={tabStyle('events')} onClick={() => setActiveTab('events')}>🎵 Events</button>
               {activeTab === 'dashboard' && (
                 <>
-                  <select value={selectedEventId} onChange={(e) => setSelectedEventId(e.target.value)} className="input" style={{ width: 'auto', minWidth: 200 }}>
+                  <select value={selectedEventId} onChange={(e) => setSelectedEventId(e.target.value)} className="input" style={{ width: 'auto', minWidth: 180 }}>
                     {eventsData?.events?.map((e: any) => (<option key={e._id} value={e._id}>{e.title}</option>))}
                   </select>
                   <button className="btn btn-secondary btn-sm" onClick={() => adminApi.pauseSale(selectedEventId).then(() => toast.success('Sale paused'))}>⏸ Pause</button>
@@ -192,7 +192,7 @@ export function AdminDashboard() {
             <motion.div key="dashboard" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
 
               {/* KPI Cards */}
-              <div className="grid-4" style={{ marginBottom: 24 }}>
+              <div className="stats-grid">
                 {[
                   { label: 'Available', value: event?.availableCount?.toLocaleString() ?? '—', color: '#059669', icon: '🟢', sub: 'seats left' },
                   { label: 'Locked',    value: event?.lockedCount?.toLocaleString()    ?? '—', color: '#E8B923', icon: '🔒', sub: 'in checkout' },

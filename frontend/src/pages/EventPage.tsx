@@ -7,6 +7,7 @@ import { eventsApi, seatsApi, checkoutApi } from '../services/api';
 import { SeatMap } from '../components/SeatMap';
 import { SeatHoldTimer } from '../components/SeatHoldTimer';
 import { CountdownTimer } from '../components/CountdownTimer';
+import { BookingAnimation } from '../components/BookingAnimation';
 import { useSeatStore } from '../stores/seatStore';
 import { useAuthStore } from '../stores/authStore';
 import { useEventSocket } from '../hooks/useSocket';
@@ -31,6 +32,7 @@ export function EventPage() {
   } = useSeatStore();
 
   const [isPolling, setIsPolling] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
   const pollingRef = useRef(false);
 
   useEventSocket(eventId!);
@@ -94,7 +96,6 @@ export function EventPage() {
     },
     onSuccess: async (data) => {
       const { orderId, jobId } = data.data;
-      toast.loading('Processing your order...', { id: 'checkout' });
       setIsPolling(true);
       pollingRef.current = true;
 
@@ -104,14 +105,17 @@ export function EventPage() {
         try {
           const { data: job } = await checkoutApi.getJobStatus(jobId);
           if (job.state === 'completed') {
-            toast.dismiss('checkout');
-            toast.success('🎉 Tickets confirmed!');
-            clearSelection();
-            clearLocks();
-            navigate(`/orders/${orderId}`);
+            setBookingSuccess(true);
+            // Navigate after animation completes
+            setTimeout(() => {
+              clearSelection();
+              clearLocks();
+              navigate(`/orders/${orderId}`);
+            }, 2400);
             return;
           } else if (job.state === 'failed') {
-            toast.dismiss('checkout');
+            setIsPolling(false);
+            pollingRef.current = false;
             toast.error(`Order failed: ${job.failedReason}`);
             break;
           }
@@ -303,14 +307,13 @@ export function EventPage() {
         </div>
       )}
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0,1fr) 300px',
-          gap: 24,
-          alignItems: 'start',
-        }}
-      >
+      {/* Booking animation overlay */}
+      <BookingAnimation
+        isVisible={isPolling || checkoutMutation.isPending}
+        isSuccess={bookingSuccess}
+      />
+
+      <div className="event-layout">
         {/* Seat Map */}
         <div>
           <div
@@ -350,8 +353,8 @@ export function EventPage() {
           )}
         </div>
 
-        {/* Sidebar */}
-        <div style={{ position: 'sticky', top: 80 }}>
+        {/* Sidebar — desktop only */}
+        <div className="event-sidebar-desktop" style={{ position: 'sticky', top: 80 }}>
           {/* Hold Timer */}
           <AnimatePresence>
             {earliestExpiry && (
@@ -507,37 +510,12 @@ export function EventPage() {
             <button
               className="btn btn-primary"
               style={{ width: '100%', justifyContent: 'center', display: isAdmin ? 'none' : 'inline-flex' }}
-              disabled={
-                selectedSeats.length === 0 ||
-                isPolling ||
-                checkoutMutation.isPending ||
-                isSoldOut ||
-                !isSaleStarted
-              }
+              disabled={selectedSeats.length === 0 || isPolling || checkoutMutation.isPending || isSoldOut || !isSaleStarted}
               onClick={() => checkoutMutation.mutate()}
             >
               {isPolling || checkoutMutation.isPending ? (
-                <>
-                  <div
-                    style={{
-                      width: 16, height: 16,
-                      border: '2px solid rgba(255,255,255,0.3)',
-                      borderTopColor: 'white',
-                      borderRadius: '50%',
-                      animation: 'spin 0.8s linear infinite',
-                    }}
-                  />
-                  Processing...
-                </>
-              ) : isSoldOut ? (
-                'Join Waitlist'
-              ) : !isSaleStarted ? (
-                'Sale Not Started'
-              ) : selectedSeats.length === 0 ? (
-                'Select Seats First'
-              ) : (
-                `Checkout — $${(totalAmount * 1.1).toFixed(2)}`
-              )}
+                <><div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />Processing...</>
+              ) : isSoldOut ? 'Join Waitlist' : !isSaleStarted ? 'Sale Not Started' : selectedSeats.length === 0 ? 'Select Seats First' : `Checkout — $${(totalAmount * 1.1).toFixed(2)}`}
             </button>
 
             {/* Admin cannot book — show notice */}
@@ -596,6 +574,30 @@ export function EventPage() {
           )}
         </div>
       </div>
+
+      {/* Mobile bottom checkout bar */}
+      {!isAdmin && (
+        <div className="mobile-checkout-bar">
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+              {selectedSeats.length > 0 ? `${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''} selected` : 'No seats selected'}
+            </div>
+            {selectedSeats.length > 0 && (
+              <div style={{ fontWeight: 800, fontSize: 18, fontFamily: 'Space Grotesk', color: 'var(--gold-600)' }}>
+                ${(totalAmount * 1.1).toFixed(2)}
+              </div>
+            )}
+          </div>
+          <button
+            className="btn btn-primary"
+            disabled={selectedSeats.length === 0 || isPolling || checkoutMutation.isPending || isSoldOut || !isSaleStarted}
+            onClick={() => checkoutMutation.mutate()}
+            style={{ minWidth: 140 }}
+          >
+            {isPolling || checkoutMutation.isPending ? '⚡ Processing...' : isSoldOut ? 'Sold Out' : !isSaleStarted ? 'Not Started' : selectedSeats.length === 0 ? 'Select Seats' : 'Checkout →'}
+          </button>
+        </div>
+      )}
 
       {/* Waitlist Section for sold-out events */}
       {isSoldOut && (

@@ -31,14 +31,15 @@ export function LoginPage() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      backgroundImage: 'url(/images/login_bg.png)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      position: 'relative',
-    }}>
+    <div
+      className="login-wrapper"
+      style={{
+        backgroundImage: 'url(/images/login_bg.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        position: 'relative',
+      }}
+    >
       {/* Overlay */}
       <div style={{
         position: 'absolute', inset: 0,
@@ -84,11 +85,7 @@ export function LoginPage() {
       </div>
 
       {/* Right: Form */}
-      <div style={{
-        width: '100%', maxWidth: 480,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 32, position: 'relative', zIndex: 1,
-      }}>
+      <div className="login-form-side" style={{ position: 'relative', zIndex: 1 }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}

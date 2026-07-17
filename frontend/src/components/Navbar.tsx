@@ -94,10 +94,10 @@ export function Navbar() {
               style={{
                 overflow: 'hidden',
                 borderTop: '1px solid var(--border-subtle)',
-                display: 'none',
               }}
               className="mobile-menu"
             >
+
               <div style={{ padding: '12px 0', display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {navLinks.filter(l => l.show).map(l => (
                   <Link
